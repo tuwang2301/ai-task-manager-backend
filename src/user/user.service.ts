@@ -20,4 +20,11 @@ export class UserService {
       },
     });
   }
+
+  validateOtp(email: string) {
+    return this.prisma.user.update({
+      where: { email },
+      data: { isVerified: true },
+    });
+  }
 }
