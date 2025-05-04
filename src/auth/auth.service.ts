@@ -32,7 +32,7 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
 
-    const isMatch = await bcrypt.compare(pass, user.password);
+    const isMatch = await bcrypt.compare(pass, user.password!);
     if (!isMatch) {
       throw new UnauthorizedException('Invalid credentials');
     }

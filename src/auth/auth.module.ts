@@ -5,6 +5,9 @@ import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { MailModule } from 'src/mail/mail.module';
+import { PassportModule } from '@nestjs/passport';
+import { GoogleStrategy } from './strategies/google-strategy';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -15,8 +18,10 @@ import { MailModule } from 'src/mail/mail.module';
       signOptions: { expiresIn: '60s' },
     }),
     MailModule,
+    PassportModule,
+    ConfigModule,
   ],
-  providers: [AuthService],
+  providers: [AuthService, GoogleStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

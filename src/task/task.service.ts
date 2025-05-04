@@ -19,6 +19,8 @@ export class TaskService {
       createdAt: new Date(),
       updatedAt: new Date(),
       isVerified: false,
+      avatar: '',
+      provider: '',
     };
     return this.prisma.task.create({
       data: { title, description, userId: user.id },

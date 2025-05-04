@@ -10,11 +10,16 @@ import {
 import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './auth.dto';
 import { Request, Response } from 'express';
-import { JwtAuthGuard } from '../guard/jwt-auth.guard';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { GoogleOauthGuard } from './guard/google-oauth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private jwtService: JwtService,
+  ) {}
 
   @Get('profile')
   @UseGuards(JwtAuthGuard) // 🔐 Yêu cầu Authentication
@@ -45,5 +50,23 @@ export class AuthController {
   validateOtp(@Body() validateOtpDto: { email: string; otp: string }) {
     const { email, otp } = validateOtpDto;
     return this.authService.validateOtp(email, otp);
+  }
+
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuth() {
+    // Redirects to Google
+  }
+
+  @Get('google/redirect')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    const user = req.user;
+
+    const payload = { sub: user.id, email: user.email };
+    const access_token = await this.jwtService.signAsync(payload);
+
+    // Gửi token về frontend bằng redirect kèm query hoặc set cookie
+    res.redirect(`http://localhost:3000/oauth-success?token=${access_token}`);
   }
 }
